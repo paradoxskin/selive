@@ -16,3 +16,4 @@ ff = webdriver.Firefox(options=ops)
 time.sleep(5)
 
 ff.get(url)
+print("[+] ok.")

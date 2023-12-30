@@ -1,4 +1,5 @@
 from mitmproxy import http
+from reader import decode
 import re
 
 def request(flow: http.HTTPFlow):
@@ -30,8 +31,7 @@ class SniffWebSocket:
     def websocket_message(self, flow: http.HTTPFlow):
         for flow_msg in flow.websocket.messages:
             packet = flow_msg.content
-            # TODO
-            print(packet)
+            decode(packet)
 
 addons = [
     SniffWebSocket()
