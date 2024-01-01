@@ -20,9 +20,8 @@ def decode(data):
                     showed = set(sorted(showed)[150:])
                 showed.add(token)
                 tm = ts2time(tm)
-                print(f"[{tm}] {uname}: {i['info'][1]}")
+                return f"[{tm}] {uname}: {i['info'][1]}"
         elif i['cmd'] == "INTERACT_WORD":
-            print(1)
             tm = int(i['data']['timestamp'])
             uname = i['data']['uname']
             token = f"{tm}^{uname}"
@@ -31,9 +30,9 @@ def decode(data):
                     showed = set(sorted(showed)[150:])
                 showed.add(token)
                 tm = ts2time(tm)
-                print(f"[{tm}] {uname} 驾到 XD")
+                return f"[{tm}] {uname} 驾到 XD"
         else:
-            print(i['cmd'])
+            return i['cmd']
         # TODO
 
 def ts2time(ts):

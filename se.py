@@ -1,8 +1,8 @@
-import configparser
+from configparser import ConfigParser
 from selenium import webdriver
-import time
+from time import sleep
 
-config = configparser.ConfigParser()
+config = ConfigParser()
 config.read("config.ini")
 
 profile = config.get("se", "profile_dir_path")
@@ -13,7 +13,10 @@ ops.add_argument("-profile")
 ops.add_argument(profile)
 ops.add_argument("--headless")
 ff = webdriver.Firefox(options=ops)
-time.sleep(5)
 
-ff.get(url)
-print("[+] ok.")
+try:
+    sleep(5)
+    ff.get(url)
+    input()
+except:
+    ff.quit()
