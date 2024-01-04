@@ -15,13 +15,11 @@ class UI:
         while True:
             key = self.body.getch()
             if key == 113:
+                fn()
                 curses.endwin()
                 curses.curs_set(1)
-                fn()
                 break
     def echo(self, message):
-        if message == None:
-            return
         self.body.addstr(message + "\n")
         self.body.refresh()
     def change_title(self, title):

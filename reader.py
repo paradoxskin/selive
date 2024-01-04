@@ -5,7 +5,7 @@ showed = set()
 def decode(data):
     global showed
     protocol = int.from_bytes(data[6:8])
-    if protocol == 1:
+    if protocol == 1 or protocol > 3:
         return
     msgs = split_msg([lambda x:x, None,
                       lambda x:zlib.decompress(x[16:]),
@@ -30,9 +30,14 @@ def decode(data):
                     showed = set(sorted(showed)[150:])
                 showed.add(token)
                 tm = ts2time(tm)
-                return f"[{tm}] {uname} 驾到 XD"
-        else:
-            return i['cmd']
+                return f"[{tm}] 󰍖 {uname}"
+        elif i['cmd'] == "WATCHED_CHANGE":
+            return f"@W{i['data']['num']}"
+        elif i['cmd'] == "SEND_GIFT":
+            tm = ts2time(int(i['data']['timestamp']))
+            return f"[{tm}] 󱛱 {i['data']['uname']} -> {i['data']['num']} {i['data']['giftName']}"
+        #else:
+        #    return i['cmd']
         # TODO
 
 def ts2time(ts):

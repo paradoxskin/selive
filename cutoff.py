@@ -2,27 +2,36 @@ from mitmproxy import http, ctx
 from reader import decode
 from ui import UI
 from re import findall
-from threading import Thread
-from subprocess import Popen
+from threading import Thread, Condition
+#from subprocess import Popen
 from time import sleep
+from se import start_se
 
 # step 1. start ui
 ui = UI()
 ui.change_title("hello, world")
-ui.echo("hi~")
+ui.echo("[i] hi~")
 
 # step 2. start selenium
-process = Popen(["python", "./se.py"])
-sleep(.5)
-ui.echo("[+] start selenium")
+shutdown = Condition()
+se = Thread(target=start_se,
+            args=(ui.echo,
+                  shutdown))
+sleep(.2)
+se.start()
+ui.echo("[i] se starting...")
+#process = Popen(["python", "./se.py"])
 
 # step 3. keyboard listen
+def quitall():
+    with shutdown:
+        shutdown.notify()
+    ctx.master.shutdown()
+    ui.echo("[+] bye ~")
+    sleep(1)
 keyboard = Thread(target=ui.start,
-                            args=(lambda :(ctx.master.shutdown(),
-                                           process.send_signal(2) ),))
+                  args=(quitall,))
 keyboard.start()
-sleep(.5)
-ui.echo('[i] press "q" to quit')
 
 # rules
 def request(flow: http.HTTPFlow):
@@ -52,8 +61,18 @@ class SniffWebSocket:
     def __init__(self):
         pass
     def websocket_message(self, flow: http.HTTPFlow):
+        msgs = []
         for flow_msg in flow.websocket.messages:
             packet = flow_msg.content
-            ui.echo(decode(packet))
+            msg = decode(packet)
+            if msg == None:
+                continue
+            msgs.append(msg)
+        msgs.sort()
+        for msg in msgs:
+            if msg[0] == "[":
+                ui.echo(msg)
+            elif msg[:2] == "@W":
+                ui.change_title(f"󰓠 {msg[2:]}")
 
 addons = [SniffWebSocket()]
