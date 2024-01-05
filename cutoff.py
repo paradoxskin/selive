@@ -11,6 +11,8 @@ from se import start_se
 ui = UI()
 ui.change_title("waiting...")
 ui.echo("[i] hi~")
+ui.send_gift("󱛯 ")
+ui.come_in("󰍖 ")
 
 # step 2. start selenium
 shutdown = Condition()

@@ -32,7 +32,7 @@ def decode(data):
                     come = set(sorted(come)[1500:])
                 come.add(token)
                 tm = ts2time(tm)
-                return f"@C[{tm}] 󰍖 {uname}"
+                return f"@C󰍖 [{tm}] {uname}"
         elif i['cmd'] == "WATCHED_CHANGE": # 历史观看人数变化
             return f"@W{i['data']['num']}"
         elif i['cmd'] == "SEND_GIFT": # 送礼物
@@ -44,7 +44,7 @@ def decode(data):
                     gift = set(sorted(gift)[1500:])
                 gift.add(token)
                 tm = ts2time(tm)
-                return f"@G[{tm}] 󱛱 {i['data']['uname']} -> {i['data']['num']} {i['data']['giftName']}"
+                return f"@G󱛱 [{tm}] {i['data']['uname']} -> {i['data']['num']} {i['data']['giftName']}"
         #else:
         #    return i['cmd']
         # TODO?
