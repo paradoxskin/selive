@@ -2,8 +2,10 @@ import zlib, brotli, json
 import time
 
 showed = set()
+gift = set()
+come = set()
 def decode(data):
-    global showed
+    global showed, come, gift
     protocol = int.from_bytes(data[6:8])
     if protocol == 1 or protocol > 3:
         return
@@ -11,34 +13,41 @@ def decode(data):
                       lambda x:zlib.decompress(x[16:]),
                       lambda x:brotli.decompress(x[16:])][protocol](data))
     for i in msgs:
-        if i['cmd'] == "DANMU_MSG":
+        if i['cmd'] == "DANMU_MSG": #发弹幕
             tm = int(i['info'][9]['ts'])
             uname = i['info'][2][1]
             token = f"{tm}#{uname}"
             if token not in showed and tm > time.time() - 10:
-                if len(showed) == 200:
-                    showed = set(sorted(showed)[150:])
+                if len(showed) == 2000:
+                    showed = set(sorted(showed)[1500:])
                 showed.add(token)
                 tm = ts2time(tm)
                 return f"[{tm}] {uname}: {i['info'][1]}"
-        elif i['cmd'] == "INTERACT_WORD":
+        elif i['cmd'] == "INTERACT_WORD": # 进房间
             tm = int(i['data']['timestamp'])
             uname = i['data']['uname']
             token = f"{tm}^{uname}"
-            if token not in showed and tm > time.time() - 10:
-                if len(showed) == 200:
-                    showed = set(sorted(showed)[150:])
-                showed.add(token)
+            if token not in come and tm > time.time() - 10:
+                if len(come) == 2000:
+                    come = set(sorted(come)[1500:])
+                come.add(token)
                 tm = ts2time(tm)
-                return f"[{tm}] 󰍖 {uname}"
-        elif i['cmd'] == "WATCHED_CHANGE":
+                return f"@C[{tm}] 󰍖 {uname}"
+        elif i['cmd'] == "WATCHED_CHANGE": # 历史观看人数变化
             return f"@W{i['data']['num']}"
-        elif i['cmd'] == "SEND_GIFT":
-            tm = ts2time(int(i['data']['timestamp']))
-            return f"[{tm}] 󱛱 {i['data']['uname']} -> {i['data']['num']} {i['data']['giftName']}"
+        elif i['cmd'] == "SEND_GIFT": # 送礼物
+            tm = int(i['data']['timestamp'])
+            uname = i['data']['uname']
+            token = f"{tm}!{uname}"
+            if token not in gift and tm > time.time() - 10:
+                if len(gift) == 2000:
+                    gift = set(sorted(gift)[1500:])
+                gift.add(token)
+                tm = ts2time(tm)
+                return f"@G[{tm}] 󱛱 {i['data']['uname']} -> {i['data']['num']} {i['data']['giftName']}"
         #else:
         #    return i['cmd']
-        # TODO
+        # TODO?
 
 def ts2time(ts):
     return time.strftime("%H:%M:%S", time.localtime(ts))

@@ -9,7 +9,7 @@ from se import start_se
 
 # step 1. start ui
 ui = UI()
-ui.change_title("hello, world")
+ui.change_title("waiting...")
 ui.echo("[i] hi~")
 
 # step 2. start selenium
@@ -74,5 +74,9 @@ class SniffWebSocket:
                 ui.echo(msg)
             elif msg[:2] == "@W":
                 ui.change_title(f"󰓠 {msg[2:]}")
+            elif msg[:2] == "@C":
+                ui.come_in(msg[2:])
+            elif msg[:2] == "@G":
+                ui.send_gift(msg[2:])
 
 addons = [SniffWebSocket()]

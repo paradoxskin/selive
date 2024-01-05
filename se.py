@@ -15,11 +15,16 @@ def start_se(echo, shutdown):
     ops.add_argument("-profile")
     ops.add_argument(profile)
     ops.add_argument("--headless")
+
     ff = webdriver.Firefox(service=ser, options=ops)
-    sleep(5)
     ff.get(url)
     echo("[+] se ok.")
     echo('[i] press "q" to quit')
+
+    sleep(5)
+    ff.find_element("tag name", "video").click()
+    ff.find_element("class name", "left-area").find_element("tag name", "span").click()
+
     with shutdown:
         shutdown.wait()
     ff.quit()
